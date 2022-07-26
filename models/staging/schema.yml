@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: stg_heap_events_fct
+    description: This model looks through all raw events and marks funnel and conversion events to facilitate pivoting the funnel in the sessions table
+    columns:
+        - name: heap_event_id
+          description: the primary key for this table that is the unique id for each event 
+          tests:
+            - unique
+            - not_null     
+        - name: heap_user_id 
+          description: the unique id for the user that is either a cookie id or a hashed identity value
+        - name: heap_session_id
+          description: the session id that the event is associated with 
+        - name: heap_event_name 
+          description: the event table name of the synced heap event 
+        - name: heap_event_time 
+          description: the timestamp at which the event occurred 
+        - name: heap_event_source
+          description: the heap sdk that received the event 
+        - name: heap_event_funnel_position
+          description: the funnel step number for the event 
+        - name: heap_is_conversion_event 
+          description: boolean in the form of 1 or 0 indicating if the event is a conversion event 
+
+  - name: stg_heap_sessions_fct
+    description: joins the heap source sessions table with a rollup of the all events table to view funnel metrics per session 
+    columns:      
+        - name: heap_session_id
+          description: the primary key for the sessions table that is unique for each user session 
+          tests: 
+            - not_null
+            - unique
+        - name: heap_user_id
+          description: the unique id for the user that is either a cookie id or a hashed identity value
+        - name: heap_session_index 
+          description: the sequence number for the session
+        - name: heap_session_country 
+          description: the country the session was initiated from based on the user agent 
+        - name: heap_session_region 
+          description: the region or state the session was initiated from based on the user agent 
+        - name: heap_session_city
+          description: the city the session was initiated from based on the user agent 
+        - name: heap_session_ip
+          description: the users ip address associated with the session 
+        - name: heap_session_referrer
+          description: the referrering url that directed the user to the landing page where heap first picked up on the user 
+        - name: heap_session_landing_page 
+          description: the page the user landed on that initiated the session 
+        - name: heap_session_landing_page_query
+          description: the query parameters on the landing page that initiated the session 
+        - name: heap_session_landing_page_hash 
+          description: the hash values on the landing page that initiated the session 
+        - name: heap_session_browser
+          description: the browser the user was using when the session was initiated 
+        - name: heap_session_utm_source
+          description: the utm_source parameter from the heap_session_landing_page_query variable 
+        - name: heap_session_utm_campaign
+          description: the utm_campaign parameter from the heap_session_landing_page_query variable 
+        - name: heap_session_utm_medium
+          description: the utm_medium parameter from the heap_session_landing_page_query variable 
+        - name: heap_session_utm_term
+          description: the utm_term parameter from the heap_session_landing_page_query variable 
+        - name: heap_session_utm_content
+          description: the utm_content parameter from the heap_session_landing_page_query variable 
